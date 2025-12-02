@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es6", // modern JS
+    "module": "commonjs", // simplest for ts-node
+    "strict": false,
+    "esModuleInterop": true, // allows default import from CommonJS modules
+    "skipLibCheck": true,
+    "rootDir": "./",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "typeRoots": ["node_modules/@types"],
+    "types": ["react", "react-dom"],
+  },
+  "include": ["src/**/*", "__tests__/**/*", "data.ts"]
+}
