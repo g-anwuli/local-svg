@@ -1,10 +1,10 @@
 import { TOKEN_TYPE } from "./enums";
 
 export class Token {
-  constructor(public name: TOKEN_TYPE, public value: string | null) {}
+  constructor(public name: TOKEN_TYPE, public value: string) {}
 }
 
-const Spec: [RegExp, TOKEN_TYPE][] = [
+const Spec: [RegExp, TOKEN_TYPE | null][] = [
   [/^\s+/, null],
   [/^<\?xml[^]*\?>/, null],
   [/^<!--[\s\S]*?-->/, null],

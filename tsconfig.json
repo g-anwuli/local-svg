@@ -1,15 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6", // modern JS
-    "module": "commonjs", // simplest for ts-node
-    "strict": false,
-    "esModuleInterop": true, // allows default import from CommonJS modules
-    "skipLibCheck": true,
-    "rootDir": "./",
+    "outDir": "dist",
+    "sourceMap": true,
     "jsx": "react-jsx",
     "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types"],
-    "types": ["react", "react-dom"],
+    "module": "ESNext",
+    "target": "ES6",
+    "declaration": true,
+    "declarationMap": true
   },
-  "include": ["src/**/*", "__tests__/**/*", "data.ts"]
+  "include": ["src"]
 }

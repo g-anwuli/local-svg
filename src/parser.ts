@@ -1,5 +1,6 @@
 import { TOKEN_TYPE } from "./enums";
 import { Tokenizer } from "./tokenizer";
+import { REACT_NAMESPACE_ATTRS } from "./namespace";
 
 class SvgNode {
   public children: (SvgNode | string)[] = [];
@@ -17,7 +18,10 @@ class SvgNode {
   }
 }
 
-const AllowedLookAhead = {
+const AllowedLookAhead: Record<
+  TOKEN_TYPE,
+  Partial<Record<TOKEN_TYPE, boolean>>
+> = {
   [TOKEN_TYPE.BEGIN_TAG]: {
     [TOKEN_TYPE.ATTRIBUTE]: true,
     [TOKEN_TYPE.END_TAG]: true,
@@ -46,6 +50,31 @@ const AllowedLookAhead = {
   },
 };
 
+function formatAttributeName(name: string) {
+  // 1. ARIA → passthrough
+  if (name.startsWith("aria-")) {
+    return name;
+  }
+
+  // 2. Explicit React namespace mapping
+  if (REACT_NAMESPACE_ATTRS[name]) {
+    return REACT_NAMESPACE_ATTRS[name];
+  }
+
+  // 3. Unsupported XML namespaces → bail out
+  if (
+    name.startsWith("rdf:") ||
+    name.startsWith("cc:") ||
+    name.startsWith("dc:") ||
+    name.startsWith("xmlns:")
+  ) {
+    return name.toLowerCase();
+  }
+
+  // 4. Standard HTML/SVG attribute
+  return name.replace(/-([a-zA-Z])/g, (_, char) => char.toUpperCase());
+}
+
 class Parser {
   tokenizer: Tokenizer;
 
@@ -59,15 +88,15 @@ class Parser {
     let tags: SvgNode[] = [root];
     let lookAhead = this.tokenizer.getNextToken();
 
-    while (true) {
-      if (this.tokenizer.isEOF()) {
-        break;
-      }
-
+    while (lookAhead) {
       const token = lookAhead;
       lookAhead = this.tokenizer.getNextToken();
 
-      if (lookAhead && !AllowedLookAhead[token.name][lookAhead.name]) {
+      if (!token) {
+        throw new SyntaxError(`Not Token found where expected`);
+      }
+
+      if (lookAhead && !AllowedLookAhead[token.name]?.[lookAhead.name]) {
         throw new SyntaxError(
           `Unexpected token ${lookAhead.name} after ${token.name}`
         );
@@ -82,7 +111,11 @@ class Parser {
 
         case TOKEN_TYPE.ATTRIBUTE:
           const [name, value] = token.value.split("=");
-          tags[tags.length - 1].addProp(name, value.slice(1, -1));
+
+          tags[tags.length - 1].addProp(
+            formatAttributeName(name),
+            value.slice(1, -1)
+          );
           break;
 
         case TOKEN_TYPE.END_TAG:
@@ -94,7 +127,7 @@ class Parser {
             // ✅ NOW in the right place
             throw new SyntaxError("Unexpected closing tag");
           }
-          const current = tags.pop();
+          const current = tags.pop()!;
           if (current.type !== token.value.slice(2, -1)) {
             throw new SyntaxError(
               `Mismatched tag: expected </${current.type}>, got ${token.value}`

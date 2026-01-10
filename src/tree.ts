@@ -1,5 +1,5 @@
 import { createElement, Ref } from "react";
-import { SvgNode } from "../parser";
+import { SvgNode } from "./parser";
 
 export function buildSvgReactTree(
   node: SvgNode | string,

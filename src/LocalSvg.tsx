@@ -1,51 +1,47 @@
-import {
-  forwardRef,
-  ReactNode,
-  SVGAttributes,
-  useEffect,
-  useState,
-} from "react";
-import { Parser, SvgNode } from "../parser";
+import { forwardRef, memo, SVGAttributes, useEffect, useState } from "react";
+import { SvgNode } from "./parser";
 import { buildSvgReactTree } from "./tree";
-import { sample } from "../../data";
+import { createSvg } from "./query";
 
-type LocalSvgProps = SVGAttributes<SVGSVGElement> & {
+export type LocalSvgProps = SVGAttributes<SVGSVGElement> & {
   name: string;
   baseUrl?: string;
-  placeholder?: ReactNode;
+  as?: React.ElementType;
 };
 
-const fetchSvg = async (url: string): Promise<string> => {
-  return sample;
-};
+const LocalSvg = memo(
+  forwardRef<SVGSVGElement, LocalSvgProps>(
+    ({ name, baseUrl = "/", as = "span", ...props }, ref) => {
+      const [node, setNode] = useState<SvgNode | null>(null);
 
-const IN_MEMORY_CACHE: Record<string, SvgNode> = {};
+      useEffect(() => {
+        const loadSvg = async () => {
+          const node = await createSvg(name, baseUrl);
+          if (node) {
+            setNode(node);
+          }
+        };
 
-const LocalSvg = forwardRef<SVGSVGElement, LocalSvgProps>(
-  ({ name, baseUrl = "/", placeholder = <div />, ...props }, ref) => {
-    const [node, setNode] = useState<SvgNode>(null);
+        loadSvg();
+      }, []);
 
-    useEffect(() => {
-      const fullUrl = `${baseUrl}${name}.svg`;
+      const Com = as;
 
-      const loadSvg = async () => {
-        if (IN_MEMORY_CACHE[fullUrl]) {
-          setNode(IN_MEMORY_CACHE[fullUrl]);
-          return;
-        }
-
-        const svgString = await fetchSvg(fullUrl);
-        const parser = new Parser();
-        const parsedNode = parser.parse(svgString);
-        IN_MEMORY_CACHE[fullUrl] = parsedNode;
-        setNode(parsedNode);
-      };
-
-      loadSvg();
-    }, []);
-
-    return node ? placeholder : buildSvgReactTree(node, ref, props);
-  }
+      return node ? (
+        buildSvgReactTree(node, ref, props)
+      ) : (
+        <Com
+          className={props.className}
+          style={{
+            width: props.width,
+            height: props.height,
+            display: "inline-block",
+            ...props.style,
+          }}
+        />
+      );
+    }
+  )
 );
 
 export { LocalSvg };
