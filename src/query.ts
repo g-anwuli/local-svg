@@ -45,6 +45,11 @@ function minifySVG(svg: string) {
     .replace(/\n|\r|\t/g, "")
     .replace(/\s{2,}/g, " ")
     .replace(/\s*(=)\s*"/g, '="')
+    .replace(/class="[^"]+"/g, "")
+    .replace(/<!--.*?-->/g, "") // Remove comments
+    .replace(/\sxmlns(?::[a-zA-Z0-9_-]+)?="[^"]*"/g, "") // Remove xmlns attribute
+    .replace(/<\?xml[^>]*>/g, "") // Remove XML declaration
+    .replace(/<metadata>.*?<\/metadata>/g, "") // Remove metadata
     .trim();
 
   // 2️⃣ Collect all IDs that look like IconifyId* or long random IDs
@@ -92,30 +97,29 @@ export const createSvg = async (name: string, baseUrl = "/") => {
         text = await _fetch(fullUrl);
 
         if (text) {
-          try {
-            localStorage.setItem(fullUrl, text);
-          } catch (error) {
-            console.warn("LocalStorage is full, cannot cache SVG.");
-          }
+          setTimeout(() => {
+            try {
+              const minified = minifySVG(text);
+              const diff = text.length - minified.length;
+              console.log(
+                `SVG Minification saved ${diff} bytes for ${name}, percentage: ${(
+                  (diff / text.length) *
+                  100
+                ).toFixed(2)}%`
+              );
+              localStorage.setItem(fullUrl, minified);
+            } catch (error) {
+              console.warn("LocalStorage is full, cannot cache SVG.");
+            }
+          });
         }
       }
 
       if (text) {
-        setTimeout(() => {
-          const diff = text.length - minifySVG(text).length;
-          console.log(
-            text.length,
-            text.length - diff,
-            `SVG Minification saved ${diff} bytes for ${name}, percentage: ${(
-              (diff / text.length) *
-              100
-            ).toFixed(2)}%`
-          );
-        });
-
         const node = await processSvgText(text);
         resolve(node);
       }
+
       resolve(undefined);
     } catch (error) {
       reject(error);

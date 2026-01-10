@@ -1178,6 +1178,11 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
+local-svg@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/local-svg/-/local-svg-0.0.3.tgz#a17d3a7962f3da31f4e94ba231f6347a1f2d37b6"
+  integrity sha512-6oxmYdcS6w/Ih9uD70w7fp3qXBITnegpXvBIOtPZVpXYHGDdwVdK5Jq2B/uETwASziCPbYKoZwwi0c8IlLhkEg==
+
 locate-path@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-6.0.0.tgz#55321eb309febbc59c4801d931a72452a681d286"
