@@ -1,28 +1,28 @@
 {
   "name": "local-svg",
-  "version": "0.0.5",
+  "version": "0.0.11",
   "description": "LocalSvg - A lightweight React component for loading local or remote SVGs. Skip bloated icon sets and streamline your custom icon workflow.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/g-anwuli/local-svg.git"
+    "url": "git+https://github.com/g-anwuli/local-svg.git"
   },
   "author": "Godswill Anwuli",
   "license": "MIT",
-  "private": false,
   "keywords": [
     "svg",
     "icon",
-    "local-svg"
+    "local-svg",
+    "react-svg",
+    "react-icons"
   ],
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "publish": "npm publish --access public "
+    "build": "tsup"
   },
   "devDependencies": {
     "@types/node": "^25.0.8",
