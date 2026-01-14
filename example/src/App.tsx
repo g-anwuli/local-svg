@@ -1,24 +1,37 @@
+import { Grid, type CellComponentProps } from "react-window";
 import { LocalSvg } from "../../src/LocalSvg";
+
+function GridCell({ style }: CellComponentProps) {
+  return (
+    <div style={style}>
+      <LocalSvg name="vite" width={32} height={32} />
+    </div>
+  );
+}
 
 function App() {
   return (
-    <div className="">
-      <LocalSvg key={"big"} name="test" width="100%" height="100%" />
-      {Array.from({ length: 10 }, (_, i) => i).map((i) => (
-        <LocalSvg
-          key={i}
-          // name={i === 0 ? "test" : "vite"}
-          name={""}
-          baseUrl={
-            i % 2
-              ? "https://unpkg.com/@tabler/icons@latest/icons/outline/home"
-              : "https://unpkg.com/@tabler/icons@latest/icons/outline/heart"
-          }
-          width={100}
-          height={100}
-        />
-      ))}
-    </div>
+    <Grid
+      cellComponent={GridCell}
+      cellProps={{}}
+      columnCount={20}
+      columnWidth={80}
+      rowCount={1_000_000}
+      rowHeight={80}
+      style={{ width: "100vw", height: "100vh" }}
+    />
+    // <div className="">
+    //   <LocalSvg key={"big"} name="test" width="100vw" height="100vh" />
+    //   <Grid
+    //     cellComponent={GridCell}
+    //     cellProps={{}}
+    //     columnCount={20}
+    //     columnWidth={80}
+    //     rowCount={100}
+    //     rowHeight={80}
+    //     style={{ width: "100vw", height: "100vh" }}
+    //   />
+    // </div>
   );
 }
 

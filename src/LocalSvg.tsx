@@ -9,21 +9,24 @@ export type LocalSvgProps = SVGAttributes<SVGSVGElement> & {
   as?: React.ElementType;
 };
 
-const LocalSvg = memo(
+export const LocalSvg = memo(
   forwardRef<SVGSVGElement, LocalSvgProps>(
     ({ name, baseUrl = "/", as = "span", ...props }, ref) => {
       const [node, setNode] = useState<SvgNode | null>(null);
 
       useEffect(() => {
-        const loadSvg = async () => {
-          const node = await createSvg(name, baseUrl);
-          if (node) {
-            setNode(node);
-          }
-        };
+        let alive = true;
 
-        loadSvg();
-      }, []);
+        createSvg(name, baseUrl)
+          .then((node) => {
+            if (alive && node) setNode(node);
+          })
+          .catch((err) => console.error(err));
+
+        return () => {
+          alive = false;
+        };
+      }, [name, baseUrl]);
 
       const Com = as;
 
@@ -43,5 +46,3 @@ const LocalSvg = memo(
     }
   )
 );
-
-export { LocalSvg };

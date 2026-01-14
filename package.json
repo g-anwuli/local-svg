@@ -1,6 +1,6 @@
 {
   "name": "local-svg",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "LocalSvg - A lightweight React component for loading local or remote SVGs. Skip bloated icon sets and streamline your custom icon workflow.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -21,9 +21,11 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "publish": "npm publish --access public "
   },
   "devDependencies": {
+    "@types/node": "^25.0.8",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "tsup": "^8.5.1",
